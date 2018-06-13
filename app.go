@@ -62,11 +62,31 @@ func deposit(w http.ResponseWriter,r *http.Request){
     insertStat , err := db.Prepare("INSERT INTO history VALUES (?,?,?)")
     if err != nil {
         log.Fatal(err)
-        fmt.Fprintf(w,"ERROR")
+        fmt.Fprintf(w,"+ERROR")
     }else{
         insertStat.Exec(from,to,statement_encoded)
     }
 
+}
+
+func transalteStatement(w http.ResponseWriter, r *http.Request){
+    params:=mux.Vars(r)
+    statement_encoded:=params["statement_encoded"]
+    rows,err := db.Query("SELECT statement from statements WHERE statement_encoded=?",statement_encoded)
+    if err!=nil{
+        log.Fatal(err)
+        fmt.Fprintf(w,"ERROR")
+    }
+    defer rows.Close()
+    rows.Next()
+    var statement string
+    err = rows.Scan(&statement)
+    if err != nil {
+        log.Fatal(err)
+    }
+    translation:=map[string]string{"statement":statement}
+    json.NewEncoder(w).Encode(translation)
+    
 }
 
 func newstatement(w http.ResponseWriter,r *http.Request){
@@ -89,6 +109,7 @@ func main() {
     router.HandleFunc("/withdraw/{startstamp}/{endstamp}",withdraw).Methods("GET")
     router.HandleFunc("/deposit/{from}/{to}/{statement_encoded}",deposit).Methods("GET")
     router.HandleFunc("/newstatement/{statement}/{statement_encoded}",newstatement).Methods("GET")
+    router.HandleFunc("/transaltestatement/{statement_encoded}",transalteStatement).Methods("GET")
     log.Println("Started Server")
     if err != nil {log.Fatal(err)}
 
