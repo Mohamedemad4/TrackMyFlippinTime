@@ -13,6 +13,32 @@ import (
 
 var db, err = sql.Open("sqlite3", "./db.db")
 
+func init(){
+    _, err := db.Query("SELECT * FROM statements LIMIT 1;")
+    if err != nil {
+        sqlStmt := `
+        CREATE TABLE statements (statement VARCHAR(50),statement_encoded VARCHAR(50));
+        CREATE TABLE history (fromstamp int(8), tostamp int(8),statement_encoded VARCHAR(59));
+        ` 
+        _, err = db.Exec(sqlStmt)
+        if err != nil {
+            log.Printf("%q: %s\n", err, sqlStmt)
+        }
+    }
+}
+func main() {
+    router := mux.NewRouter()
+    router.HandleFunc("/", rootPage).Methods("GET")
+    router.HandleFunc("/withdraw/{startstamp}/{endstamp}",withdraw).Methods("GET")
+    router.HandleFunc("/deposit/{from}/{to}/{statement_encoded}",deposit).Methods("GET")
+    router.HandleFunc("/newstatement/{statement}/{statement_encoded}",newstatement).Methods("GET")
+    router.HandleFunc("/transaltestatement/{statement_encoded}",transalteStatement).Methods("GET")
+    log.Println("Started Server")
+   
+    defer db.Close()
+    log.Fatal(http.ListenAndServe(":8080", router))
+}
+
 func rootPage(w http.ResponseWriter, r *http.Request) {
     t, _ := template.ParseFiles("index.html")
     t.Execute(w,"")
@@ -29,7 +55,7 @@ func withdraw(w http.ResponseWriter,r *http.Request){
         start,end,start,end)
 
     if err != nil {
-        log.Fatal(err)
+        log.Println(err)
     }else{
        defer rows.Close()
        for rows.Next() {
@@ -38,14 +64,14 @@ func withdraw(w http.ResponseWriter,r *http.Request){
            var statement_encoded string
            err = rows.Scan(&fromstamp,&tostamp,&statement_encoded)
            if err != nil {
-               log.Fatal(err)
+               log.Println(err)
            }
            historySlice=append(historySlice,map[string]interface{}{"fromstamp":
             fromstamp, "tostamp": tostamp,"statement_encoded":statement_encoded})
        }
        err = rows.Err()
        if err != nil {
-           log.Fatal(err)
+           log.Println(err)
        }
     }
     json.NewEncoder(w).Encode(historySlice)  
@@ -61,7 +87,7 @@ func deposit(w http.ResponseWriter,r *http.Request){
    
     insertStat , err := db.Prepare("INSERT INTO history VALUES (?,?,?)")
     if err != nil {
-        log.Fatal(err)
+        log.Println(err)
         fmt.Fprintf(w,"+ERROR")
     }else{
         insertStat.Exec(from,to,statement_encoded)
@@ -74,7 +100,7 @@ func transalteStatement(w http.ResponseWriter, r *http.Request){
     statement_encoded:=params["statement_encoded"]
     rows,err := db.Query("SELECT statement from statements WHERE statement_encoded=?",statement_encoded)
     if err!=nil{
-        log.Fatal(err)
+        log.Println(err)
         fmt.Fprintf(w,"ERROR")
     }
     defer rows.Close()
@@ -82,7 +108,7 @@ func transalteStatement(w http.ResponseWriter, r *http.Request){
     var statement string
     err = rows.Scan(&statement)
     if err != nil {
-        log.Fatal(err)
+        log.Println(err)
     }
     translation:=map[string]string{"statement":statement}
     json.NewEncoder(w).Encode(translation)
@@ -95,35 +121,10 @@ func newstatement(w http.ResponseWriter,r *http.Request){
     statement_encoded:=params["statement_encoded"]
     insertStat, err := db.Prepare("INSERT INTO statements VALUES (?,?)")
     if err != nil {
-        log.Fatal(err)
+        log.Println(err)
         fmt.Fprintf(w,"ERROR")
     }else{
         insertStat.Exec(statement, statement_encoded)
     }
 }
 
-
-func main() {
-    router := mux.NewRouter()
-    router.HandleFunc("/", rootPage).Methods("GET")
-    router.HandleFunc("/withdraw/{startstamp}/{endstamp}",withdraw).Methods("GET")
-    router.HandleFunc("/deposit/{from}/{to}/{statement_encoded}",deposit).Methods("GET")
-    router.HandleFunc("/newstatement/{statement}/{statement_encoded}",newstatement).Methods("GET")
-    router.HandleFunc("/transaltestatement/{statement_encoded}",transalteStatement).Methods("GET")
-    log.Println("Started Server")
-    if err != nil {log.Fatal(err)}
-
-    _, err := db.Query("SELECT * FROM statements LIMIT 1;")
-    if err != nil {
-        sqlStmt := `
-        CREATE TABLE statements (statement VARCHAR(50),statement_encoded VARCHAR(50));
-        CREATE TABLE history (fromstamp int(8), tostamp int(8),statement_encoded VARCHAR(59));
-        ` 
-        _, err = db.Exec(sqlStmt)
-        if err != nil {
-            log.Printf("%q: %s\n", err, sqlStmt)
-        }
-    }
-    defer db.Close()
-    log.Fatal(http.ListenAndServe(":8080", router))
-}
