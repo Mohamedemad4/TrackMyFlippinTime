@@ -11,7 +11,7 @@ import (
     "github.com/gorilla/mux"
 )
 
-var db, err = sql.Open("sqlite3", "./db.db")
+var db, err = sql.Open("sqlite3", "./tmft_service.db")
 
 func init(){
     _, err := db.Query("SELECT * FROM statements LIMIT 1;")
@@ -33,7 +33,7 @@ func main() {
     router.HandleFunc("/deposit/{from}/{to}/{statement_encoded}",deposit).Methods("GET")
     router.HandleFunc("/newstatement/{statement}/{statement_encoded}",newstatement).Methods("GET")
     router.HandleFunc("/transaltestatement/{statement_encoded}",transalteStatement).Methods("GET")
-    log.Println("Started Server")
+    log.Println("Started Server on :9922")
    
     defer db.Close()
     log.Fatal(http.ListenAndServe(":9922", router))
