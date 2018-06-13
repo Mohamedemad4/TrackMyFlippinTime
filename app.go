@@ -36,7 +36,7 @@ func main() {
     log.Println("Started Server")
    
     defer db.Close()
-    log.Fatal(http.ListenAndServe(":8080", router))
+    log.Fatal(http.ListenAndServe(":9922", router))
 }
 
 func rootPage(w http.ResponseWriter, r *http.Request) {
