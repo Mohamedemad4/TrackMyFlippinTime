@@ -1,9 +1,5 @@
 basic HTML with graph support
-save stuff on google drive Via Oauth
-basic app struct in app.go
 basic Cli app in cli.go 
 donate each state with a statement set in web gui
-track from last time
-add Js pieCharts
+make PWA
 angular.Js call API from frontend
-add SQL/Csv to the REST Api
