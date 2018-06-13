@@ -1,5 +1,6 @@
+export/import db option
 basic HTML with graph support
-basic Cli app in cli.go 
 donate each state with a statement set in web gui
 make PWA
 angular.Js call API from frontend
+add withdraw ,newstatement in cli.go
