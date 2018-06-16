@@ -5,7 +5,7 @@ import (
     "log"
     "fmt"
     "database/sql"
-    "text/template"
+    "io/ioutil"
     "encoding/json"
     _ "github.com/mattn/go-sqlite3"
     "github.com/gorilla/mux"
@@ -40,8 +40,11 @@ func main() {
 }
 
 func rootPage(w http.ResponseWriter, r *http.Request) {
-    t, _ := template.ParseFiles("index.html")
-    t.Execute(w,"")
+	file,err:=ioutil.ReadFile("index.html")
+	if err!=nil{
+	  log.Println("Error reading index.html")
+	}
+	fmt.Fprintf(w,string(file))
 }
 
 func withdraw(w http.ResponseWriter,r *http.Request){
