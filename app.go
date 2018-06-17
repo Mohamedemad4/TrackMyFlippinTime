@@ -4,6 +4,7 @@ import (
     "net/http"
     "log"
     "fmt"
+    "os"
     "database/sql"
     "io/ioutil"
     "encoding/json"
@@ -14,6 +15,23 @@ import (
 var db, err = sql.Open("sqlite3", "./tmft_service.db")
 
 func init(){
+    if err!=nil{
+        log.Fatal(err)
+    }
+    if _, err := os.Stat("Ang.js"); os.IsNotExist(err){
+        response, err:= http.Get("https://raw.githubusercontent.com/Mohamedemad4/TrackMyFlippinTime/master/Ang.js")
+        if err!=nil{log.Fatal(err)}
+        body, err := ioutil.ReadAll(response.Body)
+        if err!=nil{log.Fatal(err)}
+        ioutil.WriteFile("Ang.js", body, 0644)
+    }
+    if _, err := os.Stat("index.html"); os.IsNotExist(err){
+        response, err:= http.Get("https://raw.githubusercontent.com/Mohamedemad4/TrackMyFlippinTime/master/index.html")
+        if err!=nil{log.Fatal(err)}
+        body, err := ioutil.ReadAll(response.Body)
+        if err!=nil{log.Fatal(err)}
+        ioutil.WriteFile("index.html", body, 0644)
+    }  
     _, err := db.Query("SELECT * FROM statements LIMIT 1;")
     if err != nil {
         sqlStmt := `
