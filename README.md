@@ -25,7 +25,7 @@ sudo mv cli /usr/local/bin/trackmft #add it to the $PATH
 ```
 
 ### Service
-you can just download a precompiled executable for your platform from the [releases page](https://github.com/Mohamedemad4/TrackMyFlippinTime/releases) 
+*You can just download a precompiled executable for your platform from the [releases page](https://github.com/Mohamedemad4/TrackMyFlippinTime/releases)*
 
 or you can build it from source:
 
@@ -54,7 +54,8 @@ and execute it
 ## Service API
 
 the service API has 4 endpoints 
-####newstatement
+
+#### newstatement
 ```
 GET /newstatement/<statement>/<statement_encoded>
 ```
