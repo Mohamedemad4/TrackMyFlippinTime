@@ -29,6 +29,7 @@ func init(){
 func main() {
     router := mux.NewRouter()
     router.HandleFunc("/", rootPage).Methods("GET")
+    router.HandleFunc("/Ang.js", JsPage).Methods("GET")
     router.HandleFunc("/withdraw/{startstamp}/{endstamp}",withdraw).Methods("GET")
     router.HandleFunc("/deposit/{from}/{to}/{statement_encoded}",deposit).Methods("GET")
     router.HandleFunc("/newstatement/{statement}/{statement_encoded}",newstatement).Methods("GET")
@@ -42,9 +43,17 @@ func main() {
 func rootPage(w http.ResponseWriter, r *http.Request) {
 	file,err:=ioutil.ReadFile("index.html")
 	if err!=nil{
-	  log.Println("Error reading index.html")
+	  log.Println("Error reading index.html",err)
 	}
 	fmt.Fprintf(w,string(file))
+}
+
+func JsPage(w http.ResponseWriter, r *http.Request) {
+    file,err:=ioutil.ReadFile("Ang.js")
+    if err!=nil{
+      log.Println("Error reading Ang.js",err)
+    }
+    fmt.Fprintf(w,string(file))
 }
 
 func withdraw(w http.ResponseWriter,r *http.Request){
@@ -130,4 +139,3 @@ func newstatement(w http.ResponseWriter,r *http.Request){
         insertStat.Exec(statement, statement_encoded)
     }
 }
-
