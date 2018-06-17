@@ -35,6 +35,9 @@ func main(){
         log.Fatal(err)
     }
     api_resp:=string(body)
+    if api_resp=="ERROR"{
+        log.Fatal("Error Saving time Check the Service Logs")
+    }
 
 }
 
