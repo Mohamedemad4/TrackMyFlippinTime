@@ -7,7 +7,14 @@
 </head>
 <body>
 <div ng-app="app" ng-controller='ctrl'>
-    <div ng-show='ShowLogMenu==1'>
+    <div ng-show='Error!=0' class="w3-red">
+        <div id="panal" class="w3-panel">
+            <span ng-click="Error=0" class="w3-closebtn">&times;</span>
+            <h1>Error!</h1>
+            <h3>{{Error}}</h3>
+        </div>
+    </div>
+    <div ng-show='ShowLogMenu==1;'>
         <div id="panal" class="w3-panel">
             <span ng-click="ShowLogMenu=0" class="w3-closebtn">&times;</span>
             <h3>Log Time Usage</h3>
@@ -21,7 +28,7 @@
         </div>
     </div>
     
-    <div ng-show='ShowNewStatementMenu==1'>
+    <div ng-show='ShowNewStatementMenu==1;'>
         <div id="panal" class="w3-panel">
             <span ng-click="ShowNewStatementMenu=0" class="w3-closebtn">&times;</span>
             <h3>Add new Statement</h3>
