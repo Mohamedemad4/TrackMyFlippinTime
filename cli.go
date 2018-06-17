@@ -12,11 +12,19 @@ import (
 )
 
 func main(){
-    site:="http://localhost:9922"
-    fromstring:=os.Args[1]
-    tostring:=os.Args[2]
-    statment:=os.Args[3]
+    if len(os.Args)!=4{
+        fmt.Println("Error Parsing Input")
+        fmt.Println("Usage: trackmft <from time> <to time> <satement encoded> \n (use 24 hours format)")
 
+    }else{
+        fromstring:=os.Args[1]
+        tostring:=os.Args[2]
+        statment:=os.Args[3]
+        dep(fromstring,tostring,statment)
+    }
+}
+func dep(fromstring string,tostring string,statment string){
+    site:="http://localhost:9922"
     from:=strings.Split(fromstring,":")
     to:=strings.Split(tostring,":")
     
@@ -38,7 +46,6 @@ func main(){
     if api_resp=="ERROR"{
         log.Fatal("Error Saving time Check the Service Logs")
     }
-
 }
 
 func toint(strint string)int{
