@@ -1,7 +1,7 @@
 <html>
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-	<script src="https://cdnjs.com/libraries/Chart.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
     <script src="/Ang.js"></script>
     <link rel = "stylesheet" href = "https://www.w3schools.com/lib/w3.css">
 </head>
@@ -42,8 +42,41 @@
     </div>
 
 
-<button class="w3-btn" ng-click="ShowLogMenu=1">Log Your Time</button>
-<button class="w3-btn" ng-click="ShowNewStatementMenu=1">Add a new Statement</button>
+
+<div class="w3-border-top w3-bottombar w3-border-black"></div>
+<button class="w3-btn w3-left" ng-click="ShowLogMenu=1">Log Your Time</button>
+<button class="w3-btn w3-right" ng-click="ShowNewStatementMenu=1">Add a new Statement</button>
+<canvas id="myChart" width="400" height="400"></canvas>
+<script>
+data = {
+datasets: [{
+data: [],
+backgroundColor: []}],
+labels: []
+};
+var ctx = document.getElementById("myChart").getContext('2d');
+
+var myDoughnutChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: data,
+    options: {
+                responsive: true,
+                legend: {
+                    position: 'bottom',
+                },
+                title: {
+                    display: true,
+                    text: 'What Was I Doing?'
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+});
+
+
+</script>
 
 </body>
 </html>
