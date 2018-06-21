@@ -3,6 +3,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
     <link rel = "stylesheet" href = "https://www.w3schools.com/lib/w3.css">
+    <style>.bright {position: fixed;bottom: 0;right: 0;}.bleft {position: fixed;bottom: 0;left: 0;}</style>
 </head>
 <body>
 <div ng-app="app" ng-controller='ctrl'>
@@ -50,6 +51,8 @@
 <div class="w3-border-top w3-bottombar w3-border-black"></div>
 <button class="w3-btn w3-left" ng-click="ShowLogMenu=1">Log Your Time</button>
 <button class="w3-btn w3-right" ng-click="ShowNewStatementMenu=1">Add a new Statement</button>
+<button class="w3-btn bright" ng-click="ShowLogMenu=1">export/import Database</button>
+<button class="w3-btn bleft" ng-click="ShowLogMenu=1">Someother Fucntion</button>
 <canvas id="myChart"></canvas>
 <script src="/Ang.js"></script>
 </body>
