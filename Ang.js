@@ -1,7 +1,40 @@
-var app = angular.module("app",[]);
-app.controller("ctrl", function($scope,$http) {
+angular.module("app",[]).controller("ctrl", function($scope,$http) {
+    
+    $scope.Error=0;
+    $scope.pieinit=function(){
+        
+    var request = new XMLHttpRequest();
+    request.open('GET', '/initPie/', false); 
+    request.send(null);
+    if (request.status === 200) {
+      var dataHttp=request.responseText;
+    }else{
+        $scope.Error="Error Getting doughnut-chart data";
+        return;
+    }
+        dataHttp=JSON.parse(dataHttp)
+        labels=[]
+        data1=[]
 
-    $scope.Error=0
+        Object.keys(dataHttp).forEach(function(key) {
+            labels.push(key)
+            data1.push(dataHttp[key])
+        });
+
+        data={
+            labels: labels,
+            datasets: [{
+                data: data1,
+                backgroundColor: ['darkMagenta', 
+                'chocolate','fireBrick','blueViolet','darkGoldenRod','cadetBlue','crimson',
+                'darkSlateBlue','gold','brown','darkSlateGray','coral','darkorange','burlyWood','chartreuse'],
+            }]
+        };
+        console.log(data)
+        console.log(labels)
+        return data
+    }
+
     $scope.SaveTime=function(){
         if(typeof $scope.From=="undefined" || typeof $scope.To=="undefined" || 
             typeof $scope.Statement_encoded =="undefined"){
@@ -38,7 +71,7 @@ app.controller("ctrl", function($scope,$http) {
     $scope.SaveStatement=function(){
         if(typeof $scope.Statemnet_real=="undefined" || typeof $scope.Statement_encoded_input=="undefined"){
             $scope.ShowNewStatementMenu=0;
-            $scope.Error="You Can't Leave Values Empty!";
+            $sope.Error="You Can't Leave Values Empty!";
             return;
         }
         $http.get("/newstatement/"+$scope.Statemnet_real+"/"+$scope.Statement_encoded_input).then(
@@ -47,5 +80,24 @@ app.controller("ctrl", function($scope,$http) {
                 $scope.Error="Unable to Save New Statement Check the Service Logs";
         }});
     }
+
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var myDoughnutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: $scope.pieinit(),
+        options: {
+                    responsive: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: 'And how exactly did I waste my time?'
+                    },
+                    animation: {
+                        animateScale: true
+                    }
+                }
+    });
 
 });
