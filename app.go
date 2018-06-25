@@ -2,6 +2,7 @@ package main
 
 import (
     "os"
+    "io"
     "log"
     "fmt"
     "time"
@@ -51,6 +52,8 @@ func main() {
     router := mux.NewRouter()
     router.HandleFunc("/", rootPage).Methods("GET")
     router.HandleFunc("/Ang.js", JsPage).Methods("GET")
+    router.HandleFunc("/import", saveDb).Methods("POST")
+    router.HandleFunc("/export", serverDb).Methods("GET")
     router.HandleFunc("/initPie/",initPie).Methods("GET")
     router.HandleFunc("/withdraw/{startstamp}/{endstamp}",withdraw).Methods("GET")
     router.HandleFunc("/deposit/{from}/{to}/{statement_encoded}",deposit).Methods("GET")
@@ -70,12 +73,37 @@ func rootPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w,string(file))
 }
 
+func serverDb(w http.ResponseWriter, r *http.Request){
+    file,err:=ioutil.ReadFile("tmft_service.db")
+    if err!=nil{
+      log.Println("Error reading tmft_service.db ",err)
+    }
+    fmt.Fprintf(w,string(file))   
+}
+
 func JsPage(w http.ResponseWriter, r *http.Request) {
     file,err:=ioutil.ReadFile("Ang.js")
     if err!=nil{
       log.Println("Error reading Ang.js",err)
     }
     fmt.Fprintf(w,string(file))
+}
+
+func saveDb(w http.ResponseWriter, r *http.Request){
+    f,_,err:=r.FormFile("dbSave")
+    if err!=nil{
+        log.Println(err)
+        fmt.Fprintf(w,"ERROR")
+    }
+    defer f.Close()
+    fs,err:=os.OpenFile("./tmft_service.db", os.O_WRONLY|os.O_CREATE, 0666)
+    if err!=nil{
+        log.Println(err)
+        fmt.Fprintf(w,"ERROR")
+    }
+    defer fs.Close()
+    io.Copy(fs,f)
+    http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func withdraw(w http.ResponseWriter,r *http.Request){
@@ -106,6 +134,7 @@ func withdraw(w http.ResponseWriter,r *http.Request){
        err = rows.Err()
        if err != nil {
            log.Println(err)
+           fmt.Fprintf(w,"ERROR")
        }
     }
     json.NewEncoder(w).Encode(historySlice)  
@@ -122,7 +151,7 @@ func deposit(w http.ResponseWriter,r *http.Request){
     insertStat , err := db.Prepare("INSERT INTO history VALUES (?,?,?)")
     if err != nil {
         log.Println(err)
-        fmt.Fprintf(w,"+ERROR")
+        fmt.Fprintf(w,"ERROR")
     }else{
         insertStat.Exec(from,to,statement_encoded)
     }
