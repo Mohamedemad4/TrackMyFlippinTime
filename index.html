@@ -7,6 +7,7 @@
 </head>
 <body>
 <div ng-app="app" ng-controller='ctrl'>
+
     <div ng-show='Error!=0' class="w3-red">
         <div id="panal" class="w3-panel">
             <span ng-click="Error=0" class="w3-closebtn">&times;</span>
@@ -14,6 +15,23 @@
             <h3>{{Error}}</h3>
         </div>
     </div>
+    
+    <div ng-show='ShowExportDb==1;'>
+        <div id="panal" class="w3-panel">
+            <span ng-click="ShowExportDb=0" class="w3-closebtn">&times;</span>
+            <h3>IMPORT/EXPORT Database</h3>
+            
+            <form enctype="multipart/form-data" action="/import" method="post">
+            <input class="w3-btn" type = "file" placeholder="" name="dbSave" file-model = "dbSave"/>
+            <button class="w3-btn" type="submit">import Databse</button>
+            </form>
+
+            <br><br>
+            <a href="/export" class="w3-btn" target="_blank">Export</a>      
+            <button class="w3-btn" ng-click="ShowExportDb=0">Close</button>
+        </div>
+    </div>
+    
 
     <div ng-show='ShowLogMenu==1;'>
         <div id="panal" class="w3-panel">
@@ -29,6 +47,7 @@
             <button class="w3-btn" ng-click="ShowLogMenu=0">Close</button>
         </div>
     </div>
+    
     
     <div ng-show='ShowNewStatementMenu==1;'>
         <div id="panal" class="w3-panel">
@@ -51,8 +70,8 @@
 <div class="w3-border-top w3-bottombar w3-border-black"></div>
 <button class="w3-btn w3-left" ng-click="ShowLogMenu=1">Log Your Time</button>
 <button class="w3-btn w3-right" ng-click="ShowNewStatementMenu=1">Add a new Statement</button>
-<button class="w3-btn bright" ng-click="ShowLogMenu=1">export/import Database</button>
-<button class="w3-btn bleft" ng-click="ShowLogMenu=1">Someother Fucntion</button>
+<button class="w3-btn bright" ng-click="ShowExportDb=1">export/import Database</button>
+<button class="w3-btn bleft" ng-click="ShowLogMenu=1">Someother Function</button>
 <canvas id="myChart"></canvas>
 <script src="/Ang.js"></script>
 </body>
