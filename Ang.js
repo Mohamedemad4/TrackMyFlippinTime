@@ -3,18 +3,18 @@ angular.module("app",[]).controller("ctrl", function($scope,$http) {
     $scope.Error=0;
     $scope.pieinit=function(){
         
-    var request = new XMLHttpRequest();
-    request.open('GET', '/initPie/', false); 
-    request.send(null);
-    if (request.status === 200) {
-      var dataHttp=request.responseText;
-    }else{
-        $scope.Error="Error Getting doughnut-chart data";
-        return;
-    }
-        dataHttp=JSON.parse(dataHttp)
-        labels=[]
-        data1=[]
+        var request = new XMLHttpRequest();
+        request.open('GET', '/initPie/', false); 
+        request.send(null);
+        if (request.status === 200) {
+          var dataHttp=request.responseText;
+        }else{
+            $scope.Error="Error Getting doughnut-chart data";
+            return;
+        }
+            dataHttp=JSON.parse(dataHttp)
+            labels=[]
+            data1=[]
 
         Object.keys(dataHttp).forEach(function(key) {
             labels.push(key)
@@ -30,8 +30,6 @@ angular.module("app",[]).controller("ctrl", function($scope,$http) {
                 'darkSlateBlue','gold','brown','darkSlateGray','coral','darkorange','burlyWood','chartreuse'],
             }]
         };
-        console.log(data)
-        console.log(labels)
         return data
     }
 
